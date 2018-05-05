@@ -1,0 +1,30 @@
+version: "3.3"
+# reference: https://docs.docker.com/compose/compose-file
+# docker-compose up --build
+
+version: "3.2"
+services:
+
+  release:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:1337"
+      - "1337:1337"
+    # env_file: .env
+    
+  dev:
+    build:
+      context: .
+      dockerfile: dev/Dockerfile-dev
+    ports:
+      - "5000:1337"
+      # - "1337:1337"
+      - "3449:3449"
+    volumes:
+      - type: bind
+        source: .
+        target: /usr/src/app
+    
+
