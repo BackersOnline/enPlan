@@ -1,8 +1,6 @@
 # HackHLTH
 
-Clojure starter template for rapid prototyping.
-
-Providing the framework to build a universal (nee isomporhic) Clojurescript React app for mobile and/or web.
+Framework to build a universal (nee isomporhic) Clojurescript React app for mobile and/or web.
 
 Runs on Docker and Heroku using node express, bootstrap, and material design, with hotloaded code shared between frontend and backend.
 
