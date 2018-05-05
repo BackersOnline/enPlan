@@ -13,4 +13,8 @@
     :refer [pane]]))
 
 (defn view [session]
-  [:div "Main"])
+  (into
+   [:table.table]
+   (for [[k v] @(:survey/response session)]
+     [:tr [:th (str k)]
+          [:td (str v)]])))

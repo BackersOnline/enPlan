@@ -54,4 +54,6 @@
   (reg-property :mobile)
   (reg-property :dashboard)
 
+  (reg-property :survey/response)
+
   (rf/dispatch-sync [:initialize]))

@@ -13,17 +13,18 @@
 ;; material-ui stepper abstraction
 ;; incomplete
 
-(defn step [{:keys [label final step-index]} content]
+(defn step [{:keys [label final step-index]} & content]
   [ui/step
    [ui/step-label label]
-   [ui/step-content {}
-    content]
+   (into [ui/step-content {}]
+         content)
    [ui/step-content {:style {:margin-top "1em"}}
     [:div {:style {:display (if final "none")}}
       [ui/flat-button {:label "Next"
                        :on-click #(swap! step-index inc)}]]]])
 
-(defn stepper [{:as session}]
+#_
+(defn stepper-demo [{:as session}]
   (let [step-index (atom 0)
         slider-value (atom 0)]
     (fn [{:keys []

@@ -12,7 +12,8 @@
    [app.mobile.toolbar
     :refer [toolbar]]
    [app.mobile.pane
-    :refer [pane]]))
+    :refer [pane]]
+   [app.mobile.survey]))
 
 (defmethod pane ["intro"] [session]
   [:div "Intro"])

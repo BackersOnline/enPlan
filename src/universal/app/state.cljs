@@ -9,13 +9,13 @@
   (transform-keys ->kebab-case-keyword m))
 
 (def state
-  {:brand "HackBench"
+  {:brand "HackHLTH"
    :mode {:current nil
           :options [{:id "split" :title "Split"}
                     {:id "mobile" :title "Mobile"}
                     {:id "dashboard" :title "Dashboard"}]}
-   :stage nil
-   :mobile {:stage nil}
+   :mobile {:pane "survey"}
+   :survey/response nil
    :tab {:current "main"
          :options [{:id "about" :title "About"}
                    {:id "main" :title "Main"}

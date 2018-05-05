@@ -10,8 +10,8 @@
    [cljs-react-material-ui.icons :as ic]
    [goog.string :as gstring]))
 
-(defmulti pane (fn [{:keys [stage] :as session}]
-                  (if stage [@stage])))
+(defmulti pane (fn [{:keys [mobile] :as session}]
+                  (if mobile (:pane @mobile))))
 
 (defmethod pane :default [{:keys [tab] :as session}]
   [ui/card
