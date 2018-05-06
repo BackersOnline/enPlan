@@ -55,7 +55,8 @@
       :options [{:label "Yes" :id "yes"}
                 {:label "No" :id "no"}
                 {:label "Don't know" :id "unknown"}]}
-     {:requires {"status" "yes"}
+     {:requires {"status" "yes"
+                 "food" "yes"}
       :type "range"
       :id "exhausted"
       :question "How exhausted are you today?"
