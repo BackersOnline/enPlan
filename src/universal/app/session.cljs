@@ -57,10 +57,27 @@
   (reg-property :dashboard)
 
   (reg-property :survey/submit) ;; ##TODO: implement handler
-  (reg-property :survey/step-index)
   (reg-sub :patient
-    (fn [db [_]]
-      (dynamic/patient-state db)))
+           (fn [db [_]]
+             (dynamic/patient-state db)))
+
+  (reg-property :survey-step-index)
+
+  (reg-property
+   :broadcast
+   {;:dispatch (fn [_ id value]
+    ;             [:foo value]
+    :pubnub/publish (fn [_ [id value]]
+                      (timbre/debug "Publish:" {(name id) value})
+                      {:channel "value"
+                       :message {(name id) value}})})
+  (reg-property
+   ::receive
+   {:dispatch (fn [db response]
+               (timbre/debug "Incoming:" response)
+               (let [[k v] (first (vec response))]
+                 [(keyword k) v]))})
+
 
   (reg-property :survey/response)
   (reg-property
@@ -69,12 +86,14 @@
                 [:survey/response id value])
     :pubnub/publish (fn [_ id value]
                       {:channel "response"
-                       :message {:survey/response [id value]}})})
+                       :message {:response [id value]}})})
   (reg-property
-    ::receive-response
-    {:dispatch (fn [_ [id value]]
-                 [:survey/response id value])})
+   ::receive-response
+   {:dispatch (fn [_ {[id value :as response] :response}]
+                (timbre/debug "Incoming response:" id value)
+                [:survey/response id value])})
 
   (rf/dispatch-sync [:initialize])
 
+  (rf/dispatch [:pubnub/register {:channel "value" :tag ::receive}])
   (rf/dispatch [:pubnub/register {:channel "response" :tag ::receive-response}]))

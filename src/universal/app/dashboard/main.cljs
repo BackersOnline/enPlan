@@ -23,7 +23,7 @@
 
 (defn response-card [session]
   (let [reset-survey #(do (rf/dispatch [:survey/response nil])
-                          (rf/dispatch [:survey/step-index 0]))]
+                          (rf/dispatch [:broadcast [:survey-step-index 0]]))]
     [:div.card
      [:div.card-body
       [:h3.card-title "Survey Response"

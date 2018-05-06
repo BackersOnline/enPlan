@@ -33,7 +33,8 @@
    [ui/step-content {:style {:margin-top "1em"}}
     [:div {:style {:display (if final "none")}}
       [ui/flat-button {:label "Next"
-                       :on-click #(rf/dispatch [:survey/step-index (inc step-index)])}]]]])
+                       :on-click #(rf/dispatch
+                                   [:broadcast [:survey-step-index (inc step-index)]])}]]]])
 
 
 (defn step-field [{:keys [data final session ix]}]
@@ -42,7 +43,7 @@
         value (get @(:survey/response session) (:id data))]
     (step {:label (:question data)
            :final (or final (not value))
-           :step-index (or @(:survey/step-index session) 0)}
+           :step-index (or @(:survey-step-index session) 0)}
           (case (:type data)
             "multichoice"
             [radio-field    {:name (:name data)
@@ -55,7 +56,8 @@
                (assoc (:attributes data)
                       :value (or @slider-value
                                  value
-                                 (get data [:attributes :min]))
+                                 2
+                                 #_(get data [:attributes :min]))
                       :on-change (fn [e val]
                                    (changing val)))])
             (timbre/warn "no matching clause for" (:type data) data))
@@ -63,7 +65,7 @@
             [ui/raised-button
              {:label "Done"
               :primary true
-              :on-click #(do (rf/dispatch [:survey/step-index nil])
+              :on-click #(do (rf/dispatch [:broadcast [:change-step-index nil]])
                              (rf/dispatch [:survey/submit]))}]
             [:span]))))
 
@@ -71,7 +73,7 @@
   (let []
     (fn [{:keys [patient] :as session}]
      (let [survey (:survey @patient)]
-       (into [ui/stepper {:active-step (or @(:survey/step-index session) 0)
+       (into [ui/stepper {:active-step (or @(:survey-step-index session) 0)
                           :orientation "vertical"}]
          (for [[ix data] (map-indexed vector survey)]
           (step-field {:ix ix
@@ -102,7 +104,7 @@
   [ui/card {:style {:padding "1em"}}
    (if (or
         (empty? @(:survey/response session))
-        (number? @(:survey/step-index session)))
+        (number? @(:survey-step-index session)))
      [:div
        [:p (:feedback @patient)]
        [survey session]]

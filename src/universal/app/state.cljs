@@ -17,7 +17,7 @@
    :mobile {:pane "survey"}
    :patient nil
    :survey/response nil
-   :survey/step-index 0
+   :survey-step-index 0
    :tab {:current "main"
          :options [{:id "about" :title "About"}
                    {:id "main" :title "Main"}
