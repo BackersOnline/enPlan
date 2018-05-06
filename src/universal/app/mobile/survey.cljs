@@ -63,6 +63,7 @@
             [ui/raised-button
              {:label "Done"
               :on-click #(do (rf/dispatch [:survey/step-index 0])
+                             (rf/dispatch [:survey/response nil])
                              (rf/dispatch [:survey/submit]))}]
             [:span]))))
 
