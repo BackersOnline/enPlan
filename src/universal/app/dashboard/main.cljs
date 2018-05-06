@@ -14,23 +14,9 @@
    [app.dashboard.pane
     :refer [pane]]))
 
-(defn response-table [session]
-  [:table.table.table-striped.table-sm
-    (into [:tbody]
-     (for [[k v] @(:survey/response session)]
-       [:tr [:th (str k)]
-            [:td (str v)]]))])
-
-(defn response-card [session]
-  (let [reset-survey #(do (rf/dispatch [:survey/response nil])
-                          (rf/dispatch [:broadcast [:survey-step-index 0]]))]
-    [:div.card
-     [:div.card-body
-      [:h3.card-title "Survey Response"
-       [:button.button.btn.btn-danger.float-right
-        {:on-click reset-survey}
-        "Reset Survey"]]
-      [response-table session]]]))
+(defn reset-survey []
+   (rf/dispatch [:survey/response nil])
+   (rf/dispatch [:broadcast [:survey-step-index 0]]))
 
 (defn tag-badge [session k v]
   (let [response @(:survey/response session)
@@ -79,14 +65,21 @@
                   #^{:key (:id opt)}
                   [tag-badge session id (:id opt)])]]))]))
 
+(defn reset-button [session]
+  [:button.button.btn.btn-danger.float-right
+   {:on-click reset-survey
+    :disabled (if (empty? @(:survey/response session)) true)}
+   "Reset Survey"])
+
 (defn transitions-card [session]
   [:div.card
    [::div.card-body
-    [:h3.card-title "Transition Graph"]
+    [:h3.card-title
+     "Transition Graph"
+     [reset-button session]]
     [transitions-table session]]])
 
 (defn view [session]
   [:div
    [transitions-card session]
-   [plan-choices-card session]
-   [response-card session]])
+   [plan-choices-card session]])

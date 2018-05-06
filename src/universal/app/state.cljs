@@ -20,5 +20,5 @@
    :survey-step-index 0
    :tab {:current "main"
          :options [{:id "about" :title "About"}
-                   {:id "main" :title "Main"}
-                   {:id "info" :title "Info"}]}})
+                   {:id "info" :title "Dashboard"}
+                   {:id "main" :title "Inside"}]}})

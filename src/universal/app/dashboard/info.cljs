@@ -12,6 +12,20 @@
    [app.dashboard.pane
     :refer [pane]]))
 
+(defn response-table [session]
+  [:table.table.table-striped.table-sm
+    (into [:tbody]
+     (for [[k v] @(:survey/response session)]
+       [:tr [:th (str k)]
+            [:td (str v)]]))])
+
+(defn response-card [session]
+  (let []
+    [:div.card
+     [:div.card-body
+      [:h3.card-title "Survey Response"]
+      [response-table session]]]))
+
 (defn view [session]
   [:div
-   [:h1 "Info"]])
+   [response-card session]])
