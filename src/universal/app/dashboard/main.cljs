@@ -19,7 +19,8 @@
   (rf/dispatch [:broadcast [:survey-step-index 0]]))
 
 (defn tag-badge [session k v]
-  (let [response @(:survey/response session)
+  (let [presets (:presets @dynamic/transition-graph)
+        response @(:survey/response session)
         required? #(dynamic/required? {:requires {%1 %2}} response)
         required-class #(if (required? %1 %2)
                           "badge-primary"

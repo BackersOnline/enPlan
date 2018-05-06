@@ -22,7 +22,8 @@
       :id "walk"
       :treatment "Take a walk for at least 1/2 hour then relax and meditate."
       :provides [{"walk" "1/2 hour"}]}]
-    :presets {"helix:HLA-rs2187668" "TT"}
+    :presets {"helix:HLA-rs2187668" "TT"
+              "fitbit:steps" "<3000"}
     :states
     [{:requires nil
       :type "multichoice"
@@ -45,7 +46,8 @@
       :options [{:label "Very" :id "very"}
                 {:label "Somewhat" :id "somewhat"}
                 {:label "Not at all" :id "no"}]}
-     {:requires {"burnout" "maybe"}
+     {:requires {"burnout" "maybe"
+                 "fitbit:steps" "<3000"}
       :type "multichoice"
       :id "fatigued"
       :question "Are you currently feeling fatigued?"
