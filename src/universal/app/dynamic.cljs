@@ -28,7 +28,7 @@
     [{:requires nil
       :type "multichoice"
       :id "status"
-      :question "Are you OK?"
+      :question "Are you feeling OK?"
       :options [{:label "Yes" :id "positive"}
                 {:label "No" :id "negative"}]}
      {:requires {"status" "negative"}
