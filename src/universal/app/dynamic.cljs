@@ -14,7 +14,11 @@
 (def transition-graph
   (atom
    {:plan-choices
-    [{:requires {"status" "negative"}
+    [{:requires {"food" "no"}
+      :id "eat"
+      :treatment "Eat a healthy meal."
+      :provides [{"eath" "meal"}]}
+     {:requires {"status" "negative"}
       :id "walk"
       :treatment "Take a walk for at least 1/2 hour then relax and meditate."
       :provides [{"walk" "1/2 hour"}]}]

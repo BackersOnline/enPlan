@@ -87,8 +87,15 @@
        [:div]
        (for [{:keys [id treatment] :as item} plan]
          #^{:key id}
-         [:div treatment]))
-      [:p "We have a plan. And it's a good one. But you don't need it today."])))
+         [ui/card
+          [ui/card-text treatment]]))
+      [ui/card
+       [ui/card-text
+        "We have a plan."]
+       [ui/card-text
+        "And it's a good one."]
+       [ui/card-text
+        "But you don't need it today."]])))
 
 (defmethod pane "survey" [{:keys [tab patient] :as session}]
   (timbre/debug "PATIENT=" @patient)
