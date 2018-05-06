@@ -50,7 +50,8 @@
    :change-tab
    {:dispatch (fn [_ tab] [:tab :current tab])
     :pubnub/publish (fn [_ tab]
-                      {:channel "demo" :message {:tab tab}})})
+                      {:channel "demo"
+                       :message {:tab tab}})})
   (reg-property :stage)
   (reg-property :mobile)
   (reg-property :dashboard)
@@ -61,7 +62,19 @@
     (fn [db [_]]
       (dynamic/patient-state db)))
 
-
   (reg-property :survey/response)
+  (reg-property
+   :survey/change-response
+   {:dispatch (fn [_ id value]
+                [:survey/response id value])
+    :pubnub/publish (fn [_ id value]
+                      {:channel "response"
+                       :message {:survey/response [id value]}})})
+  (reg-property
+    ::receive-response
+    {:dispatch (fn [_ [id value]]
+                 [:survey/response id value])})
 
-  (rf/dispatch-sync [:initialize]))
+  (rf/dispatch-sync [:initialize])
+
+  (rf/dispatch [:pubnub/register {:channel "response" :tag ::receive-response}]))

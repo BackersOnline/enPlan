@@ -38,7 +38,7 @@
 
 (defn step-field [{:keys [data final session ix]}]
   (timbre/debug "DATA=" data)
-  (let [changing #(rf/dispatch [:survey/response (:id data) %])
+  (let [changing #(rf/dispatch [:survey/change-response (:id data) %])
         value (get @(:survey/response session) (:id data))]
     (step {:label (:question data)
            :final (or final (not value))
