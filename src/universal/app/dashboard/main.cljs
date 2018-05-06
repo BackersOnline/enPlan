@@ -15,8 +15,8 @@
     :refer [pane]]))
 
 (defn reset-survey []
-   (rf/dispatch [:survey/response nil])
-   (rf/dispatch [:broadcast [:survey-step-index 0]]))
+  (rf/dispatch [:survey/response nil])
+  (rf/dispatch [:broadcast [:survey-step-index 0]]))
 
 (defn tag-badge [session k v]
   (let [response @(:survey/response session)
@@ -25,7 +25,9 @@
                           "badge-primary"
                           "badge-secondary")]
     [:span.badge
-     {:class (required-class k v)
+     {:class (if (get presets k)
+               "badge-info"
+               (required-class k v))
       :style {:margin-right "0.3em"}}
      (str k "=" v)]))
 

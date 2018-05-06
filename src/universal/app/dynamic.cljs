@@ -22,6 +22,7 @@
       :id "walk"
       :treatment "Take a walk for at least 1/2 hour then relax and meditate."
       :provides [{"walk" "1/2 hour"}]}]
+    :presets {"helix:HLA-rs2187668" "TT"}
     :states
     [{:requires nil
       :type "multichoice"
@@ -57,7 +58,8 @@
       :question "Have you eaten yet today?"
       :options [{:label "Yes" :id "yes"}
                 {:label "No" :id "no"}]}
-     {:requires {"food" "yes"}
+     {:requires {"food" "yes"
+                 "helix:HLA-rs2187668" "TT"}
       :type "multichoice"
       :id "gluten"
       :question "Have you eaten anything containing cluten?"
@@ -90,15 +92,16 @@
 
 
 (defn patient-state [{:as db}]
-  (let [responses (:survey/response db)]
+  (let [presets (:presets @transition-graph)
+        responses (:survey/response db)]
    {:feedback "Hello! It would help your care team if you answer these questions:"
     :plan
     (->> (:plan-choices @transition-graph)
-         (filter #(required? % responses))
+         (filter #(required? % (merge responses presets)))
          (vec))
     :survey
     (->> (:states @transition-graph)
-         (filter #(required? % responses))
+         (filter #(required? % (merge responses presets)))
          (vec)
          (take 5))}))
 
