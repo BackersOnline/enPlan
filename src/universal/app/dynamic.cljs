@@ -20,7 +20,7 @@
       :question "Are you OK?"
       :options [{:label "Yes" :id "yes"}
                 {:label "No" :id "no"}]}
-     {:requires {"status" "yes"}
+     {:requires {"status" "no"}
       :type "multichoice"
       :id "burnout"
       :question "Do you experience a sense of burnout?"
@@ -32,6 +32,13 @@
       :type "multichoice"
       :id "tired"
       :question "Are you currently feeling tired?"
+      :options [{:label "Very" :id "very"}
+                {:label "Somewhat" :id "somewhat"}
+                {:label "Not at all" :id "no"}]}
+     {:requires {"burnout" "maybe"}
+      :type "multichoice"
+      :id "fatigued"
+      :question "Are you currently feeling fatigued?"
       :options [{:label "Very" :id "very"}
                 {:label "Somewhat" :id "somewhat"}
                 {:label "Not at all" :id "no"}]}
@@ -65,7 +72,7 @@
     (->> (:states @transition-graph)
          (filter #(required? % responses))
          (vec)
-         (take 3))}))
+         (take 4))}))
 
 #_
 (patient-state {})

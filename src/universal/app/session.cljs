@@ -55,6 +55,8 @@
   (reg-property :mobile)
   (reg-property :dashboard)
 
+  (reg-property :survey/submit) ;; ##TODO: implement handler
+  (reg-property :survey/step-index)
   (reg-sub :patient
     (fn [db [_]]
       (dynamic/patient-state db)))
