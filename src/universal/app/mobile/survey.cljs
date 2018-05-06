@@ -42,7 +42,7 @@
         value (get @(:survey/response session) (:id data))]
     (step {:label (:question data)
            :final (or final (not value))
-           :step-index @(:survey/step-index session)}
+           :step-index (or @(:survey/step-index session) 0)}
           (case (:type data)
             "multichoice"
             [radio-field    {:name (:name data)
@@ -62,8 +62,8 @@
           (if (and final value)
             [ui/raised-button
              {:label "Done"
-              :on-click #(do (rf/dispatch [:survey/step-index 0])
-                             #_(rf/dispatch [:survey/response nil])
+              :primary true
+              :on-click #(do (rf/dispatch [:survey/step-index nil])
                              (rf/dispatch [:survey/submit]))}]
             [:span]))))
 
@@ -71,7 +71,7 @@
   (let []
     (fn [{:keys [patient] :as session}]
      (let [survey (:survey @patient)]
-       (into [ui/stepper {:active-step @(:survey/step-index session)
+       (into [ui/stepper {:active-step (or @(:survey/step-index session) 0)
                           :orientation "vertical"}]
          (for [[ix data] (map-indexed vector survey)]
           (step-field {:ix ix
@@ -95,7 +95,7 @@
   [ui/card {:style {:padding "1em"}}
    (if (or
         (empty? @(:survey/response session))
-        (not= @(:survey/step-index session) 0))
+        (number? @(:survey/step-index session)))
      [:div
        [:p (:feedback @patient)]
        [survey session]]
