@@ -1,8 +1,8 @@
-# HackHLTH
+# enPlan
 
-Framework to build a universal (nee isomporhic) Clojurescript React app for mobile and/or web.
+http://enplan.herokuapp.com
 
-Runs on Docker and Heroku using node express, bootstrap, and material design, with hotloaded code shared between frontend and backend.
+Universal (nee isomporhic) Clojurescript React app for mobile and web. Runs on Docker and Heroku using node express, bootstrap, and material design, with hotloaded code shared between frontend and backend.
 
 ## References
 
