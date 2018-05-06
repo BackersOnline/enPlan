@@ -86,7 +86,7 @@
     (->> (:states @transition-graph)
          (filter #(required? % responses))
          (vec)
-         (take 4))}))
+         (take 6))}))
 
 #_
 (patient-state {})
