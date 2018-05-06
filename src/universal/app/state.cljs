@@ -15,6 +15,7 @@
                     {:id "mobile" :title "Mobile"}
                     {:id "dashboard" :title "Dashboard"}]}
    :mobile {:pane "survey"}
+   :patient nil
    :survey/response nil
    :tab {:current "main"
          :options [{:id "about" :title "About"}

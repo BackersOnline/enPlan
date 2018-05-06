@@ -12,7 +12,8 @@
     :refer [reg-property]]
    #_[re-frame.http-fx]
    [taoensso.timbre :as timbre]
-   [cljs-http.client :as http]))
+   [cljs-http.client :as http]
+   [app.dynamic :as dynamic]))
 
 (def interceptors [#_(when ^boolean js/goog.DEBUG debug)
                    rf/trim-v])
@@ -53,6 +54,11 @@
   (reg-property :stage)
   (reg-property :mobile)
   (reg-property :dashboard)
+
+  (reg-sub :patient
+    (fn [db [_]]
+      (dynamic/patient-state db)))
+
 
   (reg-property :survey/response)
 

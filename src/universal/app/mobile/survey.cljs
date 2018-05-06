@@ -9,34 +9,12 @@
    [cljs-react-material-ui.reagent :as ui]
    [cljs-react-material-ui.icons :as ic]
    [goog.string :as gstring]
+   [taoensso.timbre :as timbre]
    [app.mobile.pane :as pane
     :refer [pane]]
+   [app.dynamic :as dynamic]
    [util.stepper :as stepper
     :refer [step]]))
-
-(def patient-state
-  (atom
-   {:feedback "Hello! It would help your care team if you answer these questions:"
-    :survey
-    [{:type "multichoice"
-      :id "status"
-      :question "Are you OK?"
-      :options [{:label "Yes" :id "yes"}
-                {:label "No" :id "no"}]}
-     {:type "multichoice"
-      :id "burnout"
-      :question "Do you experience a sense of burnout?"
-      :options [{:label "Yes" :id "yes"}
-                {:label "Maybe" :id "maybe"}
-                {:label "No" :id "no"}
-                {:label "Don't Know" :id "unknown"}]}
-     {:type "range"
-      :id "exhausted"
-      :question "How exhausted are you today?"
-      :attributes {:min 1
-                   :max 9
-                   :step 1}}]}))
-
 
 (defn radio-field [{:keys [name options changing]}]
   (into
@@ -50,48 +28,45 @@
        :label label}])))
 
 (defn step-field [{:keys [data final step-index session ix]}]
-  (step {:label (:question data)
-         :final final
-         :step-index step-index}
-     (case (:type data)
-        "multichoice"
-        [radio-field    {:name (:name data)
-                         :value (get @(:survey/response session) (:id data))
-                         :options (:options data)
-                         :changing #(rf/dispatch [:survey/response (:id data) %])}]
-        "range"
-        (let [slider-value (atom nil)]
-         [ui/slider
-          (assoc (:attributes data)
-                 :value (or @slider-value
-                            (get @(:survey/response session) (:id data)))
-                 :on-change (fn [e val]
-                              (rf/dispatch [:survey/response (:id data) val])))]))
-    (if final
-       [ui/raised-button
-        {:label "Done"
-         :on-click #(rf/dispatch [:survey/submit])}]
-       [:div])))
+  (timbre/debug "DATA=" data)
+  (let [changing #(rf/dispatch [:survey/response (:id data) %])
+        value (get @(:survey/response session) (:id data))]
+    (step {:label (:question data)
+           :final (or final (not value))
+           :step-index step-index}
+          (case (:type data)
+            "multichoice"
+            [radio-field    {:name (:name data)
+                             :value value
+                             :options (:options data)
+                             :changing changing}]
+            "range"
+            (let [slider-value (atom nil)]
+              [ui/slider
+               (assoc (:attributes data)
+                      :value (or @slider-value value)
 
-(defn survey [{:keys [survey] :as session}]
+                      :on-change (fn [e val]
+                                   (changing val)))])
+            (timbre/warn "no matching clause for" (:type data) data))
+          (if (and final value)
+            [ui/raised-button
+             {:label "Done"
+              :on-click #(rf/dispatch [:survey/submit])}]
+            [:span]))))
+
+(defn survey [{:keys [patient] :as session}]
   (let [step-index (atom 0)]
-    (fn [{:keys []
-          :as session}]
-      [ui/stepper {:active-step @step-index
-                   :orientation "vertical"}
-       (step-field {:ix 0
-                    :data (get survey 0)
-                    :session session
-                    :step-index step-index})
-       (step-field {:ix 1
-                    :data (get survey 1)
-                    :session session
-                    :step-index step-index})
-       (step-field {:ix 2
-                    :data (get survey 2)
-                    :session session
-                    :step-index step-index
-                    :final true})
+    (fn [{:keys [patient] :as session}]
+     (let [survey (:survey @patient)]
+      (into [ui/stepper {:active-step @step-index
+                         :orientation "vertical"}]
+         (for [[ix data] (map-indexed vector survey)]
+          (step-field {:ix ix
+                       :data data
+                       :session session
+                       :step-index step-index
+                       :final (= ix (dec (count survey)))}))
        #_
        (step {:label "Name" :step-index step-index}
              [ui/text-field
@@ -111,10 +86,10 @@
               :step-index step-index}
              [ui/raised-button
               {:label "Submit Request"
-               :on-click #(rf/dispatch [:arrive/go-pickup])}])])))
+               :on-click #(rf/dispatch [:arrive/go-pickup])}]))))))
 
-(defmethod pane "survey" [{:keys [tab] :as session}]
+(defmethod pane "survey" [{:keys [tab patient] :as session}]
+  (timbre/debug "PATIENT=" @patient)
   [ui/card {:style {:padding "1em"}}
-   [:p (:feedback @patient-state)]
-   [survey (assoc session
-                  :survey (:survey @patient-state))]])
+   [:p (:feedback @patient)]
+   [survey session]])
