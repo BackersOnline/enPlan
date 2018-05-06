@@ -81,5 +81,7 @@
 
 (defn view [session]
   [:div
+   [:div.alert.alert-info
+    "Go under the hood to inspect the inner workings of the dynamic survey form determining treatments."]
    [transitions-card session]
    [plan-choices-card session]])

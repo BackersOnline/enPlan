@@ -28,4 +28,7 @@
 
 (defn view [session]
   [:div
+   [:div.alert.alert-info
+    "Doctor's dashboard to remote monitor a patient in a "
+    "telehealth continuous care setting."]
    [response-card session]])
