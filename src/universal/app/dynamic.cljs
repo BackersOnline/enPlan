@@ -42,6 +42,19 @@
       :options [{:label "Very" :id "very"}
                 {:label "Somewhat" :id "somewhat"}
                 {:label "Not at all" :id "no"}]}
+     {:requires nil
+      :type "multichoice"
+      :id "food"
+      :question "Have you eaten yet today?"
+      :options [{:label "Yes" :id "yes"}
+                {:label "No" :id "no"}]}
+     {:requires {"food" "yes"}
+      :type "multichoice"
+      :id "gluten"
+      :question "Have you eaten anything containing cluten?"
+      :options [{:label "Yes" :id "yes"}
+                {:label "No" :id "no"}
+                {:label "Don't know" :id "unknown"}]}
      {:requires {"status" "yes"}
       :type "range"
       :id "exhausted"
