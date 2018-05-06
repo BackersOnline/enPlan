@@ -66,9 +66,9 @@
 
 (defn required? [{:keys [requires] :as node} responses]
    (or (not requires)
-       (every (fn [[k v]]
-               (= v (get responses k ::undefined)))
-              requires)))
+       (every? (fn [[k v]]
+                (= v (get responses k ::undefined)))
+               requires)))
 
 #_
 (required? {:requires {"status" "yes"}}
