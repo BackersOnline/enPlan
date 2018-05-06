@@ -63,7 +63,7 @@
             [ui/raised-button
              {:label "Done"
               :on-click #(do (rf/dispatch [:survey/step-index 0])
-                             (rf/dispatch [:survey/response nil])
+                             #_(rf/dispatch [:survey/response nil])
                              (rf/dispatch [:survey/submit]))}]
             [:span]))))
 
@@ -79,8 +79,24 @@
                        :session session
                        :final (= ix (dec (count survey)))})))))))
 
+(defn plan-view [{:keys [patient] :as session}]
+  (let [response @(:survey/response session)
+        plan (:plan @patient)]
+    (if-not (empty? plan)
+      (into
+       [:div]
+       (for [{:keys [id treatment] :as item} plan]
+         #^{:key id}
+         [:div treatment]))
+      [:p "We have a plan. And it's a good one. But you don't need it today."])))
+
 (defmethod pane "survey" [{:keys [tab patient] :as session}]
   (timbre/debug "PATIENT=" @patient)
   [ui/card {:style {:padding "1em"}}
-   [:p (:feedback @patient)]
-   [survey session]])
+   (if (or
+        (empty? @(:survey/response session))
+        (not= @(:survey/step-index session) 0))
+     [:div
+       [:p (:feedback @patient)]
+       [survey session]]
+     [plan-view session])])

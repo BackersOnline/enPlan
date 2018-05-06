@@ -13,14 +13,19 @@
 
 (def transition-graph
   (atom
-   {:states
+   {:plan-choices
+    [{:requires {"status" "negative"}
+      :id "walk"
+      :treatment "Take a walk for at least 1/2 hour then relax and meditate."
+      :provides [{"walk" "1/2 hour"}]}]
+    :states
     [{:requires nil
       :type "multichoice"
       :id "status"
       :question "Are you OK?"
-      :options [{:label "Yes" :id "yes"}
-                {:label "No" :id "no"}]}
-     {:requires {"status" "no"}
+      :options [{:label "Yes" :id "positive"}
+                {:label "No" :id "negative"}]}
+     {:requires {"status" "negative"}
       :type "multichoice"
       :id "burnout"
       :question "Do you experience a sense of burnout?"
@@ -55,14 +60,15 @@
       :options [{:label "Yes" :id "yes"}
                 {:label "No" :id "no"}
                 {:label "Don't know" :id "unknown"}]}
-     {:requires {"status" "yes"
+     {:requires {"status" "positive"
                  "food" "yes"}
       :type "range"
-      :id "exhausted"
-      :question "How exhausted are you today?"
+      :id "happy"
+      :question "How happy are you today?"
       :attributes {:min 1
                    :max 9
                    :step 1}}]}))
+
 
 (defn required? [{:keys [requires] :as node} responses]
    (or (not requires)
@@ -82,11 +88,15 @@
 (defn patient-state [{:as db}]
   (let [responses (:survey/response db)]
    {:feedback "Hello! It would help your care team if you answer these questions:"
+    :plan
+    (->> (:plan-choices @transition-graph)
+         (filter #(required? % responses))
+         (vec))
     :survey
     (->> (:states @transition-graph)
          (filter #(required? % responses))
          (vec)
-         (take 6))}))
+         (take 5))}))
 
 #_
 (patient-state {})

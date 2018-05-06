@@ -32,37 +32,61 @@
         "Reset Survey"]]
       [response-table session]]]))
 
-(defn transitions-card [session]
-  (let [graph @dynamic/transition-graph
-        response @(:survey/response session)
+(defn tag-badge [session k v]
+  (let [response @(:survey/response session)
         required? #(dynamic/required? {:requires {%1 %2}} response)
         required-class #(if (required? %1 %2)
-                           "badge-success"
-                           "badge-primary")]
-    [:div.card
-     [:div.card-body
-      [:h3.card-title "Transition Graph"]
-      [:table.table.table-sm
+                          "badge-primary"
+                          "badge-secondary")]
+    [:span.badge
+     {:class (required-class k v)
+      :style {:margin-right "0.3em"}}
+     (str k "=" v)]))
+
+(defn plan-choices-table [session]
+  (let [graph @dynamic/transition-graph]
+    [:table.table.table-sm
+     (into
+      [:tbody
+       [:tr [:th "Requires"][:th "Description"]]]
+      (for [{:keys [requires treatment]}
+            (:plan-choices graph)]
+        [:tr
+         [:td (for [[k v] requires]
+                #^{:key k}
+                [tag-badge session k v])]
+         [:td treatment]]))]))
+
+(defn plan-choices-card [session]
+  [:div.card
+   [::div.card-body
+    [:h3.card-title "Plan Choices"]
+    [plan-choices-table session]]])
+
+(defn transitions-table [session]
+  (let [graph @dynamic/transition-graph]
+    [:table.table.table-sm
        (into
         [:tbody
-         [:tr [:th "Requires"][:th "Question"][:th "Provides"]]]
+         [:tr [:th "Requires"][:th "question"][:th "Provides"]]]
         (for [{:keys [requires question options id] :as item}
               (:states graph)]
           [:tr [:td (for [[k v] requires]
                       #^{:key k}
-                      [:span.badge
-                       {:class (required-class k v)
-                        :style {:margin-right "0.3em"}}
-                       (str k "=" v)])]
+                      [tag-badge session k v])]
            [:td question]
            [:td (for [opt options]
                   #^{:key (:id opt)}
-                  [:span.badge
-                   {:class (required-class id (:id opt))
-                    :style {:margin-right "0.3em"}}
-                   (str id "=" (:id opt))])]]))]]]))
+                  [tag-badge session id (:id opt)])]]))]))
+
+(defn transitions-card [session]
+  [:div.card
+   [::div.card-body
+    [:h3.card-title "Transition Graph"]
+    [transitions-table session]]])
 
 (defn view [session]
   [:div
    [transitions-card session]
+   [plan-choices-card session]
    [response-card session]])
